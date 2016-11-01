@@ -3,6 +3,23 @@
 // Use Ember Objects and Classes to represent a shopping cart!
 // Your abstractions will be `Cart` and `Order`.
 //
+const Order = Ember.Object.extend({
+  orderPrice: Ember.computed('price', 'quantity', function () {
+    return this.get('price') * this.get('quantity');
+  })
+});
+
+const Cart = Ember.Object.extend({
+  addToCart: function (order) {
+    this.get('orders').push(order);
+  },
+  totalPrice: Ember.computed('orders', function () {
+    return this.get('orders').reduce(function (sum, order) {
+      return sum + order.get('orderPrice');
+    });
+  })
+});
+
 // An Order should have
 //  -  a unit price
 //  -  a quantity
@@ -23,3 +40,26 @@
 //  -  Order 1 : 2 hats ($5 each)
 //  -  Order 2 : 1 desk lamp ($20 each)
 //  -  Order 3 : 3 hand towels ($8 each)
+
+let hats = Order.create({
+  price: 5,
+  quantity: 2
+});
+
+let deskLamp = Order.create({
+  price: 20,
+  quantity: 1
+});
+
+let handTowels = Order.create({
+  price: 8,
+  quantity: 3
+});
+
+let cart = Cart.create({
+  orders: []
+});
+
+cart.addToCart(hats);
+cart.addToCart(deskLamp);
+cart.addToCart(handTowels);
